@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Happy 50th, Dad</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital@0;1&family=DM+Sans:wght@300;400&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --white: #f9f8f6;
+    --off-white: #f0ede8;
+    --grey-light: #e2ddd8;
+    --grey-mid: #a8a09a;
+    --grey-dark: #3d3835;
+    --black: #1a1816;
+    --accent: #8c7355;
+    /* spring easing — feels physical not mechanical */
+    --spring: cubic-bezier(0.16, 1, 0.3, 1);
+    --smooth: cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  html { overflow-y: scroll; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--white);
+    color: var(--black);
+  }
+
+  section {
+    min-height: 100svh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    padding: 3rem 2rem;
+    overflow: hidden;
+  }
+
+  /* ─── SCROLL CUE ─── */
+  .scroll-cue {
+    position: absolute;
+    bottom: 2.4rem;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--grey-mid);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.35rem;
+    user-select: none;
+    pointer-events: none;
+    /* js will set opacity via inline style */
+  }
+  .scroll-cue .arr {
+    display: block;
+    width: 1px;
+    height: 28px;
+    background: currentColor;
+    position: relative;
+    animation: drip 2.2s var(--spring) infinite;
+    transform-origin: top center;
+  }
+  @keyframes drip {
+    0%   { transform: scaleY(0); opacity: 0; transform-origin: top; }
+    40%  { transform: scaleY(1); opacity: 1; transform-origin: top; }
+    60%  { transform: scaleY(1); opacity: 1; transform-origin: bottom; }
+    100% { transform: scaleY(0); opacity: 0; transform-origin: bottom; }
+  }
+
+  /* ─── REVEAL BASE ───
+     Ultra-small movement, pure opacity-led.
+     Everything feels like it breathes in, not slides in.
+  ─── */
+  .reveal {
+    opacity: 0;
+    transform: translateY(8px);
+    transition:
+      opacity 1.3s var(--spring),
+      transform 1.3s var(--spring);
+    will-change: opacity, transform;
+  }
+  .reveal.in { opacity: 1; transform: none; }
+  .reveal.d1 { transition-delay: 0.15s; }
+  .reveal.d2 { transition-delay: 0.32s; }
+  .reveal.d3 { transition-delay: 0.54s; }
+
+  /* ─── PHOTO REVEAL ───
+     No translate at all — just a slow, gentle fade.
+  ─── */
+  .photo-fade {
+    opacity: 0;
+    transition: opacity 1.6s var(--smooth);
+    will-change: opacity;
+  }
+  .photo-fade.in { opacity: 1; }
+
+  /* ─── SLOW ZOOM on photo images ─── */
+  .zoom-img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    transform: scale(1.05);
+    transition: transform 9s var(--smooth);
+    will-change: transform;
+  }
+  .zoom-img.in { transform: scale(1); }
+
+  /* ─── VERTICAL LINE ─── */
+  .bar {
+    width: 1px;
+    height: 0;
+    background: var(--accent);
+    margin-bottom: 2rem;
+    transition: height 1s var(--spring);
+    opacity: 0.7;
+  }
+  .bar.in { height: 3rem; }
+
+  /* ════════════════════════════════
+     S1 — OPENING
+  ════════════════════════════════ */
+  #s1 {
+    background: var(--black);
+    color: var(--white);
+    text-align: center;
+  }
+  #s1 h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(3.6rem, 13vw, 6.5rem);
+    font-weight: 400;
+    line-height: 1.06;
+  }
+  #s1 h1 em { font-style: italic; color: var(--grey-light); }
+  #s1 .scroll-cue { color: #4a4845; }
+
+  /* ════════════════════════════════
+     S2 — PAUSE
+  ════════════════════════════════ */
+  #s2 { background: var(--off-white); }
+  #s2 .big {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(6rem, 28vw, 13rem);
+    font-weight: 400;
+    color: var(--grey-dark);
+    line-height: 1;
+    letter-spacing: -0.03em;
+  }
+  #s2 .sub {
+    font-size: 0.68rem;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: var(--grey-mid);
+    margin-top: 1rem;
+  }
+
+  /* ════════════════════════════════
+     S3 — MESSAGE 1
+  ════════════════════════════════ */
+  #s3 { background: var(--white); padding: 3rem 2.5rem; align-items: flex-start; }
+  #s3 p {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.45rem, 5.5vw, 2.3rem);
+    line-height: 1.5;
+    color: var(--grey-dark);
+    max-width: 480px;
+  }
+
+  /* ════════════════════════════════
+     S4 — PHOTO 1 (portrait)
+  ════════════════════════════════ */
+  #s4 { background: var(--grey-dark); padding: 2.5rem 2rem; }
+  #s4 .photo-wrap {
+    width: 100%; max-width: 340px;
+    aspect-ratio: 3/4;
+    overflow: hidden; border-radius: 2px;
+  }
+  #s4 .cap {
+    margin-top: 1rem;
+    font-size: 0.66rem; letter-spacing: 0.22em;
+    text-transform: uppercase; color: var(--grey-mid);
+  }
+
+  /* ════════════════════════════════
+     S5 — MESSAGE 2
+  ════════════════════════════════ */
+  #s5 { background: var(--off-white); align-items: flex-end; text-align: right; padding: 3rem 2.5rem; }
+  #s5 p {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.4rem, 5vw, 2.2rem);
+    font-style: italic; line-height: 1.55;
+    color: var(--grey-dark); max-width: 420px;
+  }
+  #s5 .dot {
+    width: 5px; height: 5px; border-radius: 50%;
+    background: var(--accent); margin-top: 1.4rem; margin-left: auto;
+    opacity: 0; transition: opacity 1s var(--spring) 0.4s;
+  }
+  #s5 .dot.in { opacity: 1; }
+
+  /* ════════════════════════════════
+     S6 — PHOTO 2 (landscape)
+  ════════════════════════════════ */
+  #s6 { background: var(--white); padding: 2.5rem 2rem; }
+  #s6 .photo-wrap {
+    width: 100%; max-width: 560px;
+    aspect-ratio: 16/10; overflow: hidden; border-radius: 2px;
+  }
+  #s6 .cap {
+    margin-top: 1rem; font-size: 0.66rem;
+    letter-spacing: 0.22em; text-transform: uppercase;
+    color: var(--grey-mid); align-self: flex-start;
+  }
+
+  /* ════════════════════════════════
+     S7 — REFLECTION
+  ════════════════════════════════ */
+  #s7 { background: var(--black); color: var(--white); padding: 3rem 2.5rem; align-items: flex-start; }
+  #s7 .tag {
+    font-size: 0.6rem; letter-spacing: 0.28em;
+    text-transform: uppercase; color: var(--accent); margin-bottom: 2rem;
+  }
+  #s7 p {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.45rem, 5.5vw, 2.3rem);
+    line-height: 1.55; max-width: 460px;
+  }
+  #s7 p em { display: block; color: var(--grey-mid); margin-top: 0.2rem; font-style: italic; }
+
+  /* ════════════════════════════════
+     S8 — PHOTO 3 (portrait)
+  ════════════════════════════════ */
+  #s8 { background: var(--off-white); padding: 2.5rem 2rem; }
+  #s8 .photo-wrap {
+    width: 100%; max-width: 340px;
+    aspect-ratio: 3/4; overflow: hidden; border-radius: 2px;
+  }
+  /* Desaturate → colour as it fades in */
+  #s8 .zoom-img {
+    filter: grayscale(60%);
+    transition: transform 9s var(--smooth), filter 2s var(--smooth);
+  }
+  #s8 .zoom-img.in { filter: grayscale(0%); }
+  #s8 .cap {
+    margin-top: 1rem; font-size: 0.66rem;
+    letter-spacing: 0.22em; text-transform: uppercase; color: var(--grey-mid);
+  }
+
+  /* ════════════════════════════════
+     S9 — IMPACT
+  ════════════════════════════════ */
+  #s9 { background: var(--white); padding: 3rem 2.5rem; align-items: flex-start; }
+  #s9 p {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.45rem, 5.5vw, 2.3rem);
+    line-height: 1.55; color: var(--grey-dark); max-width: 480px;
+  }
+  #s9 p em { display: block; font-style: italic; color: var(--accent); margin-top: 0.15rem; }
+
+  /* ════════════════════════════════
+     S10 — COLLAGE
+  ════════════════════════════════ */
+  #s10 {
+    background: var(--black);
+    padding: 4rem 1.5rem 5rem;
+    min-height: 100svh;
+    justify-content: flex-start;
+    gap: 0;
+  }
+  #s10 .collage-label {
+    font-size: 0.62rem; letter-spacing: 0.28em;
+    text-transform: uppercase; color: var(--grey-mid);
+    margin-bottom: 1.5rem; align-self: flex-start;
+  }
+  .collage {
+    width: 100%; max-width: 560px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4px;
+  }
+  .c1 { grid-column: 1 / -1; aspect-ratio: 16/9; overflow: hidden; border-radius: 2px; }
+  .c2 { aspect-ratio: 1/1;   overflow: hidden; border-radius: 2px; }
+  .c3 { aspect-ratio: 1/1;   overflow: hidden; border-radius: 2px; }
+  .c4 { grid-column: 1 / -1; aspect-ratio: 16/9; overflow: hidden; border-radius: 2px; }
+  .c5 { grid-column: 1 / -1; aspect-ratio: 21/9; overflow: hidden; border-radius: 2px; }
+
+  /* each cell fades in with its own stagger — pure opacity, no translate */
+  .c1,.c2,.c3,.c4,.c5 {
+    opacity: 0;
+    transition: opacity 1.4s var(--smooth);
+  }
+  .c1.in { opacity: 1; transition-delay: 0s;    }
+  .c2.in { opacity: 1; transition-delay: 0.18s; }
+  .c3.in { opacity: 1; transition-delay: 0.32s; }
+  .c4.in { opacity: 1; transition-delay: 0.48s; }
+  .c5.in { opacity: 1; transition-delay: 0.65s; }
+
+  .collage img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+  /* ════════════════════════════════
+     S11 — FINAL
+  ════════════════════════════════ */
+  #s11 {
+    background: var(--black);
+    color: var(--white);
+    text-align: center;
+    padding: 4rem 2.5rem;
+    border-top: 1px solid #222;
+  }
+  #s11 .msg {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.35rem, 4.8vw, 2rem);
+    line-height: 1.6; max-width: 380px;
+  }
+  #s11 .love {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.9rem, 7vw, 3.2rem);
+    font-style: italic; color: var(--grey-light);
+    margin-top: 2.2rem;
+  }
+  #s11 .sig {
+    font-size: 0.68rem; letter-spacing: 0.28em;
+    text-transform: uppercase; color: var(--accent);
+    margin-top: 2.5rem;
+  }
+</style>
+</head>
+<body>
+
+<!-- 1 -->
+<section id="s1">
+  <h1 class="reveal">Happy<br><em>50th</em><br>Dad.</h1>
+  <div class="scroll-cue reveal d2">
+    <span>scroll</span>
+    <span class="arr"></span>
+  </div>
+</section>
+
+<!-- 2 -->
+<section id="s2">
+  <div class="big reveal">50</div>
+  <p class="sub reveal d1">years</p>
+  <div class="scroll-cue"><span class="arr"></span></div>
+</section>
+
+<!-- 3 -->
+<section id="s3">
+  <div class="bar"></div>
+  <p class="reveal d1">I've always been able to count on you, whether it's schoolwork or just random advice</p>
+  <div class="scroll-cue"><span class="arr"></span></div>
+</section>
+
+<!-- 4 — portrait photo, childhood. swap src → your file -->
+<section id="s4">
+  <div class="photo-wrap photo-fade">
+    <img class="zoom-img" src="photo1.jpg" alt="">
+  </div>
+  <p class="cap reveal d1">1</p>
+  <div class="scroll-cue"><span class="arr" style="color:#555"></span></div>
+</section>
+
+<!-- 5 -->
+<section id="s5">
+  <p class="reveal">I don't always say it, but it really does mean a lot to me</p>
+  <div class="dot"></div>
+  <div class="scroll-cue"><span class="arr"></span></div>
+</section>
+
+<!-- 6 — landscape photo, activity. swap src → your file -->
+<section id="s6">
+  <div class="photo-wrap photo-fade">
+    <img class="zoom-img" src="photo2.jpg" alt="">
+  </div>
+  <p class="cap reveal d1">2</p>
+  <div class="scroll-cue"><span class="arr"></span></div>
+</section>
+
+<!-- 7 -->
+<section id="s7">
+  <p class="tag reveal"></p>
+  <p class="reveal d1">
+  I appreciate how you’re always there for me and how much you’ve helped me. 
+  <em class="reveal d2">I’ve learned a lot just from being around you</em>
+</p>
+  <div class="scroll-cue"><span class="arr" style="color:#3a3835"></span></div>
+</section>
+
+<!-- 8 — portrait photo, mid years. swap src → your file -->
+<section id="s8">
+  <div class="photo-wrap photo-fade">
+    <img class="zoom-img" src="photo3.jpg" alt="">
+  </div>
+  <p class="cap reveal d1">3</p>
+  <div class="scroll-cue"><span class="arr"></span></div>
+</section>
+
+<!-- 9 -->
+<section id="s9">
+  <p class="reveal">
+  you’ve had an amazing impact on my life,
+  <em class="reveal d1">and on who I’ve become</em>
+</p>
+  <div class="scroll-cue"><span class="arr"></span></div>
+</section>
+
+<!-- 10 — collage. layout: c1=photo4 c2=photo1 c3=photo3 c4=photo2 c5=photo5 -->
+<section id="s10">
+  <p class="collage-label reveal">collage</p>
+  <div class="collage">
+    <div class="c1"><img src="photo4.jpg" alt=""></div>
+    <div class="c2"><img src="photo1.jpg" alt=""></div>
+    <div class="c3"><img src="photo3.jpg" alt=""></div>
+    <div class="c4"><img src="photo2.jpg" alt=""></div>
+    <div class="c5"><img src="photo5.jpg" alt=""></div>
+  </div>
+</section>
+
+<!-- 11 -->
+<section id="s11">
+  <p class="msg reveal">I appreciate everything you've done for me</p>
+  <p class="love reveal d1">love you</p>
+  <p class="sig reveal d2">— Zane</p>
+</section>
+
+<script>
+  // ── Single observer handles everything ──
+  // Threshold 0 = fires as soon as 1px enters viewport.
+  // rootMargin pulls trigger a little before so it's ready when you see it.
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (!e.isIntersecting) return;
+      const el = e.target;
+      el.classList.add('in');
+
+      // zoom images also need .in on the img itself
+      const img = el.querySelector('.zoom-img');
+      if (img) img.classList.add('in');
+
+      io.unobserve(el);
+    });
+  }, { rootMargin: '0px 0px -60px 0px', threshold: 0 });
+
+  document.querySelectorAll(
+    '.reveal, .bar, .photo-fade, .c1, .c2, .c3, .c4, .c5, #s5 .dot'
+  ).forEach(el => io.observe(el));
+
+  // ── Scroll cues: fade based on how far into the section we are ──
+  // Uses requestAnimationFrame so it doesn't jank
+  const sections = [...document.querySelectorAll('section')];
+  let ticking = false;
+  function updateCues() {
+    const vh = window.innerHeight;
+    sections.forEach(sec => {
+      const cue = sec.querySelector('.scroll-cue');
+      if (!cue) return;
+      const rect = sec.getBoundingClientRect();
+      // 0 = section top at viewport top, 1 = scrolled one full vh
+      const progress = -rect.top / vh;
+      // visible when progress 0→0.1, gone by progress 0.3
+      const opacity = Math.max(0, Math.min(1, 1 - (progress - 0.05) / 0.22));
+      cue.style.opacity = opacity;
+    });
+    ticking = false;
+  }
+  window.addEventListener('scroll', () => {
+    if (!ticking) { requestAnimationFrame(updateCues); ticking = true; }
+  }, { passive: true });
+  updateCues();
+
+  // ── Parallax: images drift slightly opposite to scroll direction ──
+  // Subtle — only 15% of scroll distance, so it feels atmospheric not gimmicky
+  const parallaxImgs = document.querySelectorAll('.zoom-img');
+  function updateParallax() {
+    const vh = window.innerHeight;
+    parallaxImgs.forEach(img => {
+      const wrap = img.closest('.photo-wrap') || img.closest('.photo-fade');
+      if (!wrap) return;
+      const rect = wrap.getBoundingClientRect();
+      const center = rect.top + rect.height / 2 - vh / 2;
+      const offset = center * 0.08; // 8% drift
+      img.style.transform = `scale(1.12) translateY(${offset}px)`;
+    });
+    ticking = false;
+  }
+  window.addEventListener('scroll', () => {
+    if (!ticking) { requestAnimationFrame(updateParallax); ticking = true; }
+  }, { passive: true });
+</script>
+</body>
+</html>
